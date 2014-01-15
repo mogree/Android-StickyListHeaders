@@ -2,7 +2,7 @@
 <resources>
 
     <declare-styleable name="StickyListHeadersListView">
-        <!-- Android attributes -->
+        <!-- View attributes -->
         <attr name="android:clipToPadding" />
         <attr name="android:padding" />
         <attr name="android:paddingLeft" />
