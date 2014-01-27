@@ -9,7 +9,6 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -105,9 +104,6 @@ public class StickyListHeadersListView extends FrameLayout {
         mList.setDivider(null);
         mList.setDividerHeight(0);
 
-        mList.setVerticalScrollBarEnabled(isVerticalScrollBarEnabled());
-        mList.setHorizontalScrollBarEnabled(isHorizontalScrollBarEnabled());
-
         if (attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(attrs,R.styleable.StickyListHeadersListView, 0, 0);
 
@@ -127,6 +123,14 @@ public class StickyListHeadersListView extends FrameLayout {
                 mClippingToPadding = a.getBoolean(R.styleable.StickyListHeadersListView_android_clipToPadding, true);
                 super.setClipToPadding(true);
                 mList.setClipToPadding(mClippingToPadding);
+
+                // scrollbars
+                final int scrollBars = a.getInt(R.styleable.StickyListHeadersListView_android_scrollbars, 0x00000200);
+                mList.setVerticalScrollBarEnabled((scrollBars & 0x00000200) != 0);
+                mList.setHorizontalScrollBarEnabled((scrollBars & 0x00000100) != 0);
+
+                // overscroll
+                mList.setOverScrollMode(a.getInt(R.styleable.StickyListHeadersListView_android_overScrollMode, 0));
 
                 // -- ListView attributes --
                 mList.setFadingEdgeLength(a.getDimensionPixelSize(R.styleable.StickyListHeadersListView_android_fadingEdgeLength,
@@ -689,6 +693,16 @@ public class StickyListHeadersListView extends FrameLayout {
     }
 
     @Override
+    public boolean isVerticalScrollBarEnabled() {
+        return mList.isVerticalScrollBarEnabled();
+    }
+
+    @Override
+    public boolean isHorizontalScrollBarEnabled() {
+        return mList.isHorizontalScrollBarEnabled();
+    }
+
+    @Override
     public void setVerticalScrollBarEnabled(boolean verticalScrollBarEnabled) {
         mList.setVerticalScrollBarEnabled(verticalScrollBarEnabled);
     }
@@ -696,6 +710,22 @@ public class StickyListHeadersListView extends FrameLayout {
     @Override
     public void setHorizontalScrollBarEnabled(boolean horizontalScrollBarEnabled) {
         mList.setHorizontalScrollBarEnabled(horizontalScrollBarEnabled);
+    }
+
+    @Override
+    @TargetApi(Build.VERSION_CODES.GINGERBREAD)
+    public int getOverScrollMode() {
+        requireSdkVersion(Build.VERSION_CODES.GINGERBREAD);
+        return mList.getOverScrollMode();
+    }
+
+    @Override
+    @TargetApi(Build.VERSION_CODES.GINGERBREAD)
+    public void setOverScrollMode(int mode) {
+        requireSdkVersion(Build.VERSION_CODES.GINGERBREAD);
+        if (mList != null) {
+            mList.setOverScrollMode(mode);
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.FROYO)
